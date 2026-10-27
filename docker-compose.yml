@@ -1,0 +1,39 @@
+services:
+  version: '3.8'
+
+  services:
+    # Твоя база данных PostgreSQL
+    db:
+      image: postgres:16
+      container_name: phygital_db
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: 1234
+        POSTGRES_DB: phygital_db
+      ports:
+        - "5432:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      healthcheck:
+        test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+
+    # Твой Java-бэкенд
+    backend:
+      build: .
+      container_name: phygital_backend
+      ports:
+        - "8080:8080"
+      environment:
+        # Переопределяем настройки application.yml для Docker
+        SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/phygital_db
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: 1234
+      depends_on:
+        db:
+          condition: service_healthy
+
+  volumes:
+    postgres_data:

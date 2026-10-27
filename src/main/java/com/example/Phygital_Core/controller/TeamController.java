@@ -19,6 +19,12 @@ public class TeamController {
 
     private final TeamService teamService;
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TeamDto> update(@PathVariable UUID id, @RequestBody TeamRequest request) {
+        // Просто вызываем сервис (метод updateTeam нужно добавить в TeamService)
+        return ResponseEntity.ok(teamService.updateTeam(id, request));
+    }
+
     @GetMapping
     public ResponseEntity<List<TeamDto>> getAll() {
         return ResponseEntity.ok(teamService.getAllTeams());

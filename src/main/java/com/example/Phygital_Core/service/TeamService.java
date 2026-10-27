@@ -1,5 +1,4 @@
 package com.example.Phygital_Core.service;
-
 import com.example.Phygital_Core.dto.*;
 import com.example.Phygital_Core.entity.Team;
 import com.example.Phygital_Core.entity.TeamMember;
@@ -26,6 +25,15 @@ public class TeamService {
         return mapToDto(team);
     }
 
+    public TeamDto updateTeam(UUID id, TeamRequest request) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new AppException(404, "Команда не найдена"));
+        team.setName(request.getName());
+        // Можно также обновить дисциплину, если нужно
+        teamRepository.save(team);
+        return mapToDto(team);
+    }
+
     public TeamDto createTeam(TeamRequest request) {
         Team team = new Team();
         team.setName(request.getName());
@@ -36,7 +44,8 @@ public class TeamService {
                 TeamMember member = new TeamMember();
                 member.setName(m.getName());
                 member.setCaptain(m.isCaptain());
-                member.setTeam(team); // Привязываем к команде
+                member.setUserId(m.getUserId()); // <-- ДОБАВИЛИ ЭТУ СТРОКУ (сохраняем ID юзера)
+                member.setTeam(team);
                 return member;
             }).toList();
             team.setMembers(members);
@@ -53,7 +62,7 @@ public class TeamService {
     private TeamDto mapToDto(Team team) {
         List<TeamMemberDto> memberDtos = team.getMembers().stream().map(m ->
                 TeamMemberDto.builder()
-                        .id(m.getId())
+                        .id(m.getUserId()) // <-- ИЗМЕНИЛИ ЭТУ СТРОКУ (отдаем ID юзера вместо ID записи в БД)
                         .name(m.getName())
                         .captain(m.isCaptain())
                         .build()

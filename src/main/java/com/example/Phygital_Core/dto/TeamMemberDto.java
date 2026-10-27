@@ -5,7 +5,7 @@ import java.util.UUID;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class TeamMemberDto {
-    private UUID id;
+    private UUID id; // Фронтенд будет использовать это как ID пользователя
     private String name;
     private boolean captain;
 }

@@ -21,4 +21,7 @@ public class TeamMember {
 
     @Column(name = "is_captain")
     private boolean captain;
+
+    @Column(name = "user_id")
+    private UUID userId;
 }
